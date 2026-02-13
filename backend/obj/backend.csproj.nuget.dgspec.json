@@ -1,26 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "/home/soulflysk/เอกสาร/testTTB/backend/backend.csproj": {}
+    "C:\\Data\\Codes\\testTTB\\backend\\backend.csproj": {}
   },
   "projects": {
-    "/home/soulflysk/เอกสาร/testTTB/backend/backend.csproj": {
+    "C:\\Data\\Codes\\testTTB\\backend\\backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/soulflysk/เอกสาร/testTTB/backend/backend.csproj",
+        "projectUniqueName": "C:\\Data\\Codes\\testTTB\\backend\\backend.csproj",
         "projectName": "backend",
-        "projectPath": "/home/soulflysk/เอกสาร/testTTB/backend/backend.csproj",
-        "packagesPath": "/home/soulflysk/.nuget/packages/",
-        "outputPath": "/home/soulflysk/เอกสาร/testTTB/backend/obj/",
+        "projectPath": "C:\\Data\\Codes\\testTTB\\backend\\backend.csproj",
+        "packagesPath": "C:\\Users\\Tanade\\.nuget\\packages\\",
+        "outputPath": "C:\\Data\\Codes\\testTTB\\backend\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "/home/soulflysk/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Tanade\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "/usr/lib/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -87,7 +91,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

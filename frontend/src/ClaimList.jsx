@@ -79,7 +79,7 @@ export default function ClaimList({ reloadFlag }) {
               <td>{c.claimAmount}</td>
               <td>{c.status}</td>
               <td>
-                <button onClick={() => deleteClaim(c.claim1Id)}>
+                <button onClick={() => deleteClaim(c.claimId)}>
                   Delete
                 </button>
               </td>
