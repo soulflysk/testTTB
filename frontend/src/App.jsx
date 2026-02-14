@@ -1,20 +1,29 @@
-import { useState } from 'react'
-import ClaimForm from './ClaimForm'
-import ClaimList from './ClaimList'
-import './App.css'
+import { useState } from "react";
+import ClaimForm from "./ClaimForm";
+import ClaimList from "./ClaimList";
 
 function App() {
-const [reloadFlag, setReloadFlag] = useState(false);
+  const [reloadFlag, setReloadFlag] = useState(false);
+  const [selectedClaim, setSelectedClaim] = useState(null);
 
   const handleSuccess = () => {
-    setReloadFlag(prev => !prev); // toggle เพื่อ trigger useEffect
+    setReloadFlag(prev => !prev);
+    setSelectedClaim(null); // reset edit mode
   };
+
   return (
     <>
-      <ClaimForm onSuccess={handleSuccess} />
-      <ClaimList reloadFlag={reloadFlag} />
+      <ClaimForm
+        selectedClaim={selectedClaim}
+        onSuccess={handleSuccess}
+      />
+
+      <ClaimList
+        reloadFlag={reloadFlag}
+        onEdit={setSelectedClaim}
+      />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

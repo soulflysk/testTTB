@@ -3,7 +3,7 @@ import axios from "axios";
 
 const API = "http://localhost:5171/api/claims";
 
-export default function ClaimList({ reloadFlag }) {
+export default function ClaimList({ reloadFlag, onEdit }) {
   const [claims, setClaims] = useState([]);
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
@@ -29,7 +29,7 @@ export default function ClaimList({ reloadFlag }) {
     setClaims(res.data.data);
     setTotal(res.data.totalCount);
   };
- const deleteClaim = async (id) => {
+  const deleteClaim = async (id) => {
     await axios.delete(`${API}/${id}`);
     fetchData();
   };
@@ -69,6 +69,7 @@ export default function ClaimList({ reloadFlag }) {
             <th>Amount</th>
             <th>Status</th>
             <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -78,6 +79,11 @@ export default function ClaimList({ reloadFlag }) {
               <td>{c.customerName}</td>
               <td>{c.claimAmount}</td>
               <td>{c.status}</td>
+              <td>
+                <button onClick={() => onEdit(c)}>
+                  Edit
+                </button>
+              </td>
               <td>
                 <button onClick={() => deleteClaim(c.claimId)}>
                   Delete
