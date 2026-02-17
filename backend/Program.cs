@@ -1,13 +1,15 @@
 using DOTNETWEBAPI_DEV.Data;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddDbContext<DbContextClass>();
+builder.Services.AddDbContext<DbContextClass>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
@@ -19,10 +21,9 @@ builder.Services.AddCors(options =>
         }
     );
 });
-builder.Services.AddDbContext<DbContextClass>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
@@ -36,5 +37,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors();
-app.MapControllers(); 
+app.MapControllers();
+
+// Seed data
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<DbContextClass>();
+    DbSeeder.SeedData(context);
+}
+
 app.Run();
