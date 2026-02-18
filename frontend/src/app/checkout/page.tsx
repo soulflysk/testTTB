@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 const API_BASE = 'http://localhost:5001/api';
@@ -27,6 +28,7 @@ interface StockStatus {
 }
 
 export default function Checkout() {
+  const router = useRouter();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [stockStatus, setStockStatus] = useState<StockStatus[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,11 +43,22 @@ export default function Checkout() {
   const fetchCart = async () => {
     try {
       const response = await axios.get(`${API_BASE}/shoppingcart`);
-      if (response.data && response.data.items && Array.isArray(response.data.items)) {
-        setCart(response.data.items);
+      console.log('Cart Response:', response.data);
+      
+      // Handle DTO response structure
+      let cartData = response.data;
+      if (cartData && cartData.items) {
+        let items = cartData.items;
+        if (items && items.$values) {
+          items = items.$values;
+        }
+        setCart(Array.isArray(items) ? items : []);
+      } else {
+        setCart([]);
       }
     } catch (error) {
       console.error('Error fetching cart:', error);
+      setCart([]);
     } finally {
       setLoading(false);
     }
@@ -54,11 +67,17 @@ export default function Checkout() {
   const fetchStockStatus = async () => {
     try {
       const response = await axios.get(`${API_BASE}/checkout/stock-status`);
-      if (Array.isArray(response.data)) {
-        setStockStatus(response.data);
+      console.log('Stock Status Response:', response.data);
+      
+      // Handle DTO response structure
+      let stockData = response.data;
+      if (stockData && stockData.$values) {
+        stockData = stockData.$values;
       }
+      setStockStatus(Array.isArray(stockData) ? stockData : []);
     } catch (error) {
       console.error('Error fetching stock status:', error);
+      setStockStatus([]);
     }
   };
 
@@ -108,7 +127,15 @@ export default function Checkout() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">การชำระเงินและจัดการสต็อก</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold">การชำระเงินและจัดการสต็อก</h1>
+          <button
+            onClick={() => router.push('/')}
+            className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700"
+          >
+            กลับหน้าร้าน
+          </button>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Cart Section */}

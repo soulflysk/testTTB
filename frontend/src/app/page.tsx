@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 interface Product {
@@ -26,6 +27,7 @@ interface CartItem {
 }
 
 export default function Home() {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,8 +94,9 @@ export default function Home() {
       });
       
       if (response.data.success) {
-        // Refresh cart after successful addition
+        // Refresh cart and products after successful addition
         await fetchCart();
+        await fetchProducts();
         alert('เพิ่มสินค้าลงตะกร้าเรียบร้อย');
       } else {
         alert('ไม่สามารถเพิ่มสินค้าในตะกร้าได้');
@@ -111,6 +114,7 @@ export default function Home() {
     try {
       await axios.put(`${API_BASE}/shoppingcart/${id}`, { quantity });
       await fetchCart();
+      await fetchProducts();
     } catch (error: any) {
       console.error('Error updating cart:', error);
       const errorMessage = error.response?.data || 'ไม่สามารถอัปเดตตะกร้าได้';
@@ -122,6 +126,7 @@ export default function Home() {
     try {
       await axios.delete(`${API_BASE}/shoppingcart/${id}`);
       await fetchCart();
+      await fetchProducts();
     } catch (error: any) {
       console.error('Error removing from cart:', error);
       const errorMessage = error.response?.data || 'ไม่สามารถลบสินค้าออกจากตะกร้าได้';
@@ -133,6 +138,7 @@ export default function Home() {
     try {
       await axios.delete(`${API_BASE}/shoppingcart`);
       await fetchCart();
+      await fetchProducts();
     } catch (error: any) {
       console.error('Error clearing cart:', error);
       const errorMessage = error.response?.data || 'ไม่สามารถล้างตะกร้าได้';
@@ -259,6 +265,7 @@ export default function Home() {
                       ล้างตะกร้า
                     </button>
                     <button
+                      onClick={() => router.push('/checkout')}
                       className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
                     >
                       ชำระเงิน
