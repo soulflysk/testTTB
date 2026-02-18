@@ -96,7 +96,7 @@ export default function Home() {
       if (response.data.success) {
         // Refresh cart and products after successful addition
         await fetchCart();
-        await fetchProducts();
+        await fetchProducts(); // รีเฟรชข้อมูลสินค้าเพื่ออัปเดตสต็อก
         alert('เพิ่มสินค้าลงตะกร้าเรียบร้อย');
       } else {
         alert('ไม่สามารถเพิ่มสินค้าในตะกร้าได้');

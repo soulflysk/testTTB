@@ -100,10 +100,17 @@ namespace ProductApi.Controllers
                 _context.ShoppingCarts.Add(cartItem);
             }
 
+            // ตัดสต็อกทันทีเมื่อเพิ่มลงตะกร้า
+            stock.Quantity -= request.Quantity;
+
             await _context.SaveChangesAsync();
 
-            // Return simple success response
-            return Ok(new { message = "เพิ่มสินค้าลงตะกร้าเรียบร้อย", success = true });
+            // Return simple success response with updated stock info
+            return Ok(new { 
+                message = "เพิ่มสินค้าลงตะกร้าเรียบร้อย", 
+                success = true,
+                remainingStock = stock.Quantity
+            });
         }
 
         // PUT: api/shoppingcart/{id}
@@ -116,17 +123,32 @@ namespace ProductApi.Controllers
             if (cartItem == null)
                 return NotFound();
 
-            // Get product and stock info separately
             var stock = await _context.Stocks
                 .FirstOrDefaultAsync(s => s.ProductCode == cartItem.ProductCode);
 
-            if (stock == null || stock.Quantity < request.Quantity)
+            if (stock == null)
+                return BadRequest("ไม่พบข้อมูลสต็อก");
+
+            // คำนวณความแตกต่างของจำนวนสินค้า
+            var quantityDifference = request.Quantity - cartItem.Quantity;
+
+            // ตรวจสอบว่ามีสต็อกเพียงพอหรือไม่
+            if (quantityDifference > 0 && stock.Quantity < quantityDifference)
                 return BadRequest("สินค้าในสต็อกไม่เพียงพอ");
 
+            // อัปเดตจำนวนสินค้าในตะกร้า
             cartItem.Quantity = request.Quantity;
+
+            // อัปเดตสต็อก (คืนสต็อกถ้าลดจำนวน หรือตัดสต็อกถ้าเพิ่มจำนวน)
+            stock.Quantity -= quantityDifference;
+
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "อัปเดตจำนวนสินค้าเรียบร้อย", success = true });
+            return Ok(new { 
+                message = "อัปเดตจำนวนสินค้าเรียบร้อย", 
+                success = true,
+                remainingStock = stock.Quantity
+            });
         }
 
         // DELETE: api/shoppingcart/{id}
@@ -137,10 +159,23 @@ namespace ProductApi.Controllers
             if (cartItem == null)
                 return NotFound();
 
+            // คืนสต็อกเมื่อลบสินค้าออกจากตะกร้า
+            var stock = await _context.Stocks
+                .FirstOrDefaultAsync(s => s.ProductCode == cartItem.ProductCode);
+
+            if (stock != null)
+            {
+                stock.Quantity += cartItem.Quantity;
+            }
+
             _context.ShoppingCarts.Remove(cartItem);
             await _context.SaveChangesAsync();
 
-            return Ok(await GetCartItems());
+            return Ok(new { 
+                message = "ลบสินค้าออกจากตะกร้าเรียบร้อย",
+                success = true,
+                remainingStock = stock?.Quantity ?? 0
+            });
         }
 
         // DELETE: api/shoppingcart

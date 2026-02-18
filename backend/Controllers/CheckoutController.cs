@@ -25,37 +25,7 @@ namespace ProductApi.Controllers
             if (!cartItems.Any())
                 return BadRequest("ตะกร้าสินค้าว่างเปล่า");
 
-            // Process each item - update stock
-            var errors = new List<string>();
-            
-            foreach (var item in cartItems)
-            {
-                var stock = await _context.Stocks
-                    .FirstOrDefaultAsync(s => s.ProductCode == item.ProductCode);
-
-                if (stock == null)
-                {
-                    errors.Add($"ไม่พบข้อมูลสต็อกสำหรับสินค้า {item.ProductCode}");
-                    continue;
-                }
-
-                if (stock.Quantity < item.Quantity)
-                {
-                    errors.Add($"สินค้า {item.ProductCode} มีสต็อกไม่เพียงพอ (มี {stock.Quantity}, ต้องการ {item.Quantity})");
-                    continue;
-                }
-
-                // Deduct stock
-                stock.Quantity -= item.Quantity;
-            }
-
-            if (errors.Any())
-                return BadRequest(new { message = "ไม่สามารถดำเนินการชำระเงินได้", errors });
-
-            // Save stock changes
-            await _context.SaveChangesAsync();
-
-            // Clear cart
+            // Clear cart (สต็อกถูกตัดไปแล้วตอนเพิ่มลงตะกร้า)
             _context.ShoppingCarts.RemoveRange(cartItems);
             await _context.SaveChangesAsync();
 
@@ -66,7 +36,8 @@ namespace ProductApi.Controllers
                 message = "ชำระเงินสำเร็จ",
                 totalAmount = totalAmount,
                 itemsProcessed = cartItems.Count,
-                timestamp = DateTime.UtcNow
+                timestamp = DateTime.UtcNow,
+                note = "สต็อกถูกตัดไปแล้วเมื่อเพิ่มสินค้าลงตะกร้า"
             });
         }
 
