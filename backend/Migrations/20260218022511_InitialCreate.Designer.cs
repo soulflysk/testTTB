@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace backend.Migrations
 {
     [DbContext(typeof(DbContextClass))]
-    [Migration("20260217070843_AddShoppingCart")]
-    partial class AddShoppingCart
+    [Migration("20260218022511_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -88,9 +88,6 @@ namespace backend.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
-                    b.Property<string>("ProductCode1")
-                        .HasColumnType("character varying(20)");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
@@ -98,8 +95,6 @@ namespace backend.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductCode1");
 
                     b.ToTable("ShoppingCarts");
                 });
@@ -118,30 +113,15 @@ namespace backend.Migrations
                     b.ToTable("Stocks");
                 });
 
-            modelBuilder.Entity("ProductApi.Models.ShoppingCart", b =>
-                {
-                    b.HasOne("ProductApi.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductCode1");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("ProductApi.Models.Stock", b =>
                 {
                     b.HasOne("ProductApi.Models.Product", "Product")
-                        .WithOne("Stock")
+                        .WithOne()
                         .HasForeignKey("ProductApi.Models.Stock", "ProductCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("ProductApi.Models.Product", b =>
-                {
-                    b.Navigation("Stock")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

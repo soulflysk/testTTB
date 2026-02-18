@@ -93,8 +93,6 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductCode");
-
                     b.ToTable("ShoppingCarts");
                 });
 
@@ -112,32 +110,15 @@ namespace backend.Migrations
                     b.ToTable("Stocks");
                 });
 
-            modelBuilder.Entity("ProductApi.Models.ShoppingCart", b =>
-                {
-                    b.HasOne("ProductApi.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("ProductApi.Models.Stock", b =>
                 {
                     b.HasOne("ProductApi.Models.Product", "Product")
-                        .WithOne("Stock")
+                        .WithOne()
                         .HasForeignKey("ProductApi.Models.Stock", "ProductCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("ProductApi.Models.Product", b =>
-                {
-                    b.Navigation("Stock")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
